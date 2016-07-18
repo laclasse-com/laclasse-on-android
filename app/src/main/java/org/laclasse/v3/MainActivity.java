@@ -14,63 +14,63 @@ import static android.webkit.WebSettings.LOAD_DEFAULT;
 public class MainActivity extends Activity {
 
     // Start page: save your local index in /src/main/assets/www/index.html
-    private final String INDEX = "http://v3.laclasse.com";
+    private final String INDEX = "http://www.laclasse.com";
 
     private WebView webView;
 
     // Handle back button press
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-	if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
-	    webView.goBack();
+        if ((keyCode == KeyEvent.KEYCODE_BACK) && webView.canGoBack()) {
+            webView.goBack();
 
-	    return true;
-	}
+            return true;
+        }
 
-	return super.onKeyDown(keyCode, event);
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-	super.onCreate(savedInstanceState);
+        super.onCreate(savedInstanceState);
 
-	// Set webview options
-	setContentView(R.layout.main);
+        // Set webview options
+        setContentView(R.layout.main);
 
-	webView = (WebView) findViewById(R.id.webview);
+        webView = (WebView) findViewById(R.id.webview);
 
-	WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = webView.getSettings();
 
-	String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
+        String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
 
-	webSettings.setJavaScriptEnabled(true);
-	webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-	webSettings.setSupportZoom(false);
-	webSettings.setSaveFormData(true);
-	webSettings.setDomStorageEnabled(true);
-	webSettings.setAppCacheEnabled(true);
-	webSettings.setAppCachePath(appCachePath);
-	webSettings.setAllowFileAccess(true);
-	webSettings.setCacheMode(LOAD_DEFAULT);
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        webSettings.setSupportZoom(false);
+        webSettings.setSaveFormData(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setAppCacheEnabled(true);
+        webSettings.setAppCachePath(appCachePath);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setCacheMode(LOAD_DEFAULT);
 
-	webView.setWebViewClient(new webViewClient());
+        webView.setWebViewClient(new webViewClient());
 
-	// Enable debugging in webview
-	if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-	    WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
-	}
+        // Enable debugging in webview
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
+        }
 
-	// Start webview
-	    webView.loadUrl(INDEX);
+        // Start webview
+        webView.loadUrl(INDEX);
     }
 
     private class webViewClient extends WebViewClient {
-	// Show a splash screen until the WebView is ready
-	@Override
-	public void onPageFinished(WebView view, String url) {
-	    findViewById(R.id.imageView1).setVisibility(View.GONE);
-	    findViewById(R.id.webview).setVisibility(View.VISIBLE);
-	}
+        // Show a splash screen until the WebView is ready
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            findViewById(R.id.imageView1).setVisibility(View.GONE);
+            findViewById(R.id.webview).setVisibility(View.VISIBLE);
+        }
     }
 
 }

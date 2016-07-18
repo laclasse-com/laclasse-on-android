@@ -1,6 +1,7 @@
 package org.laclasse.v3;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -13,10 +14,26 @@ import static android.webkit.WebSettings.LOAD_DEFAULT;
 
 public class MainActivity extends Activity {
 
-    // Start page: save your local index in /src/main/assets/www/index.html
+    // Add your HTML, JavaScript and CSS files under /src/main/assets/www/
+    // If you want to use a remote URL, change the value of INDEX
+    // You also need to add internet permissions in the manifest file
     private final String INDEX = "http://www.laclasse.com";
 
     private WebView webView;
+
+    // Provide method to execute JavaScript
+    public void evaluateJavascript(final String script) {
+        webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                        webView.evaluateJavascript(script, null);
+                    } else {
+                        webView.loadUrl("javascript:" + script);
+                    }
+                }
+            });
+    }
 
     // Handle back button press
     @Override
@@ -34,7 +51,6 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Set webview options
         setContentView(R.layout.main);
 
         webView = (WebView) findViewById(R.id.webview);
@@ -43,15 +59,20 @@ public class MainActivity extends Activity {
 
         String appCachePath = getApplicationContext().getCacheDir().getAbsolutePath();
 
-        webSettings.setJavaScriptEnabled(true);
-        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
-        webSettings.setSupportZoom(false);
-        webSettings.setSaveFormData(true);
-        webSettings.setDomStorageEnabled(true);
-        webSettings.setAppCacheEnabled(true);
-        webSettings.setAppCachePath(appCachePath);
-        webSettings.setAllowFileAccess(true);
+        webSettings.setJavaScriptEnabled(true); // Enable JavaScript
+        webSettings.setSupportZoom(false); // Disable Zoom buttons
+        webSettings.setDomStorageEnabled(true); // Enable localStorage
+        webSettings.setAppCacheEnabled(true); // Enable appCache
+        webSettings.setAppCachePath(appCachePath); // Set appCache path (needed)
+        webSettings.setAllowFileAccess(true); // Enable import from file URLs
         webSettings.setCacheMode(LOAD_DEFAULT);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+            String databasePath = getApplicationContext().getDir("databases", Context.MODE_PRIVATE).getPath();
+
+            webSettings.setDatabaseEnabled(true);
+            webSettings.setDatabasePath(databasePath);
+        }
 
         webView.setWebViewClient(new webViewClient());
 
@@ -60,7 +81,7 @@ public class MainActivity extends Activity {
             WebView.setWebContentsDebuggingEnabled(BuildConfig.DEBUG);
         }
 
-        // Start webview
+        // Load the web page
         webView.loadUrl(INDEX);
     }
 
